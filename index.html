@@ -6,15 +6,19 @@
     <title>ระบบขายสินค้า - Tok Sen POS</title>
     <style>
         :root { --primary: #2d5a27; --secondary: #f4f7f1; --accent: #e67e22; --danger: #dc3545; }
-        body { font-family: 'Tahoma', sans-serif; background: var(--secondary); margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        body { font-family: 'Tahoma', sans-serif; background: var(--secondary); margin: 0; display: flex; flex-direction: row; height: 100vh; }
         
-        /* Sidebar & Header */
-        .sidebar { width: 350px; background: white; border-right: 1px solid #ddd; display: flex; flex-direction: column; padding: 20px; box-shadow: 2px 0 5px rgba(0,0,0,0.05); }
-        .main-content { flex: 1; padding: 20px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; align-content: start; }
+        /* ปรับให้รองรับมือถือ */
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow-y: auto; height: auto; }
+            .sidebar { width: 100% !important; border-right: none !important; border-bottom: 2px solid #ddd; height: auto !important; position: sticky; top: 0; z-index: 100; }
+            .main-content { padding: 10px !important; }
+        }
+
+        .sidebar { width: 350px; background: white; border-right: 1px solid #ddd; display: flex; flex-direction: column; padding: 20px; box-shadow: 2px 0 5px rgba(0,0,0,0.05); height: 100vh; box-sizing: border-box; }
+        .main-content { flex: 1; padding: 20px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; align-content: start; }
         
-        /* Product Cards */
         .product-card { background: white; border-radius: 12px; padding: 15px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #eee; }
-        .product-id { font-size: 11px; color: #888; margin-bottom: 5px; }
         .product-icon { font-size: 40px; margin: 10px 0; }
         .product-name { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
         .product-price { color: var(--primary); font-weight: bold; margin-bottom: 10px; }
@@ -23,21 +27,18 @@
         .btn-plus { background: var(--primary); }
         .btn-minus { background: #ccc; color: #333; }
 
-        /* Cart & Summary */
-        .staff-box { margin-bottom: 20px; }
-        select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; }
-        .cart-items { flex: 1; overflow-y: auto; border-top: 1px solid #eee; padding-top: 10px; }
-        .cart-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
-        .total-box { font-size: 26px; font-weight: bold; text-align: right; padding: 15px 0; color: #333; }
-        .btn-checkout { background: var(--accent); color: white; border: none; width: 100%; padding: 18px; border-radius: 10px; font-size: 20px; cursor: pointer; font-weight: bold; }
+        .staff-box { margin-bottom: 10px; }
+        select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; background-color: #fff; }
+        .cart-items { flex: 1; overflow-y: auto; border-top: 1px solid #eee; padding-top: 10px; max-height: 150px; }
+        .total-box { font-size: 22px; font-weight: bold; text-align: right; padding: 10px 0; color: #333; }
+        .btn-checkout { background: var(--accent); color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-size: 18px; cursor: pointer; font-weight: bold; }
 
-        /* Modal */
-        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: white; width: 420px; padding: 30px; border-radius: 20px; text-align: center; }
-        .input-cash { width: 100%; padding: 15px; font-size: 28px; text-align: center; margin: 15px 0; border: 2px solid #ddd; border-radius: 10px; box-sizing: border-box; }
-        .quick-cash { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .btn-cash { padding: 12px; background: #f0f0f0; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; }
-        .change-display { font-size: 42px; color: var(--primary); font-weight: bold; margin: 15px 0; }
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index: 1001; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+        .modal-content { background: white; width: 100%; max-width: 420px; padding: 20px; border-radius: 20px; text-align: center; }
+        .input-cash { width: 100%; padding: 10px; font-size: 24px; text-align: center; margin: 10px 0; border: 2px solid #ddd; border-radius: 10px; box-sizing: border-box; }
+        .quick-cash { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .btn-cash { padding: 10px; background: #f0f0f0; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .change-display { font-size: 36px; color: var(--primary); font-weight: bold; margin: 10px 0; }
         .btn-confirm { background: #28a745; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-size: 18px; cursor: pointer; }
     </style>
 </head>
@@ -56,7 +57,7 @@
     </div>
 
     <div class="cart-items" id="cart-list">
-        <p style="text-align: center; color: #999;">ตะกร้าว่างเปล่า</p>
+        <p style="text-align: center; color: #999; font-size: 12px;">ตะกร้าว่างเปล่า</p>
     </div>
 
     <div class="total-box">
@@ -65,13 +66,12 @@
     <button class="btn-checkout" onclick="openPayment()">สรุปรายการขาย</button>
 </div>
 
-<div class="main-content" id="product-grid">
-    </div>
+<div class="main-content" id="product-grid"></div>
 
 <div id="paymentModal" class="modal">
     <div class="modal-content">
-        <h2 id="modal-total-display">ยอดรวม: 0 ฿</h2>
-        <p>รับเงินสดจากลูกค้า:</p>
+        <h2 id="modal-total-display" style="margin: 0;">ยอดรวม: 0 ฿</h2>
+        <p style="margin: 5px 0;">รับเงินสด:</p>
         <input type="number" id="cash-input" class="input-cash" placeholder="0" oninput="calculateChange()">
         
         <div class="quick-cash">
@@ -81,20 +81,18 @@
         </div>
 
         <div style="border-top: 1px solid #eee; padding-top: 10px;">
-            <span>เงินทอน:</span>
+            <span style="font-size: 14px;">เงินทอน:</span>
             <div class="change-display" id="change-text">0 ฿</div>
         </div>
         
-        <button id="submit-btn" class="btn-confirm" onclick="submitToSheet()">✅ จบการขาย & บันทึกลงชีต</button>
-        <button onclick="closeModal()" style="margin-top:15px; background:none; border:none; color:#888; cursor:pointer;">ย้อนกลับ</button>
+        <button id="submit-btn" class="btn-confirm" onclick="submitToSheet()">✅ จบการขาย & บันทึก</button>
+        <button onclick="closeModal()" style="margin-top:10px; background:none; border:none; color:#888; cursor:pointer;">ย้อนกลับ</button>
     </div>
 </div>
 
 <script>
-    // 🔗 วางลิงก์ Google Apps Script ของคุณที่นี่
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpeVW1cn02kpPbw578Lk2WnsnSEQqFmEfDU3sXpHnkLLczm3CXRkEm7RUR2I-gD_5tkQ/exec';
 
-    // 📦 รายการสินค้า (คุณแก้ ID, ชื่อ, ราคา ได้ที่นี่)
     const products = [
         { id: 'P001', name: 'น้ำมันนวด', price: 150, icon: '🧴' },
         { id: 'P002', name: 'ลูกประคบ', price: 80, icon: '🌿' },
@@ -108,7 +106,6 @@
         const grid = document.getElementById('product-grid');
         grid.innerHTML = products.map(p => `
             <div class="product-card">
-                <div class="product-id">ID: ${p.id}</div>
                 <div class="product-icon">${p.icon}</div>
                 <div class="product-name">${p.name}</div>
                 <div class="product-price">${p.price} ฿</div>
@@ -132,19 +129,17 @@
         const list = document.getElementById('cart-list');
         let total = 0;
         let html = '';
-
         products.forEach(p => {
             if (cart[p.id] > 0) {
                 const sub = p.price * cart[p.id];
                 total += sub;
-                html += `<div class="cart-item">
-                            <span>${p.name} (x${cart[p.id]})</span>
+                html += `<div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:5px;">
+                            <span>${p.name} x${cart[p.id]}</span>
                             <span>${sub.toLocaleString()} ฿</span>
                          </div>`;
             }
         });
-
-        list.innerHTML = html || '<p style="text-align: center; color: #999;">ตะกร้าว่างเปล่า</p>';
+        list.innerHTML = html || '<p style="text-align: center; color: #999; font-size: 12px;">ตะกร้าว่างเปล่า</p>';
         document.getElementById('total-price').innerText = total.toLocaleString();
     }
 
@@ -153,7 +148,6 @@
         const staff = document.getElementById('staff-name').value;
         if (total === "0") return alert("กรุณาเลือกสินค้า");
         if (staff === "") return alert("กรุณาเลือกชื่อพนักงานก่อนครับ");
-        
         document.getElementById('modal-total-display').innerText = `ยอดรวม: ${total} ฿`;
         document.getElementById('paymentModal').style.display = 'flex';
     }
@@ -169,8 +163,7 @@
         const cash = parseInt(document.getElementById('cash-input').value) || 0;
         const change = cash - total;
         const text = document.getElementById('change-text');
-        
-        text.innerText = change >= 0 ? `${change.toLocaleString()} ฿` : `ยังขาดอีก ${Math.abs(change).toLocaleString()} ฿`;
+        text.innerText = change >= 0 ? `${change.toLocaleString()} ฿` : `ขาด ${Math.abs(change).toLocaleString()} ฿`;
         text.style.color = change >= 0 ? "var(--primary)" : "var(--danger)";
     }
 
@@ -178,55 +171,33 @@
         const total = parseInt(document.getElementById('total-price').innerText.replace(/,/g, ''));
         const cash = parseInt(document.getElementById('cash-input').value) || 0;
         const change = cash - total;
-
-        if (change < 0) return alert("เงินรับมาไม่เพียงพอครับ");
+        if (change < 0) return alert("เงินไม่พอครับ");
 
         const btn = document.getElementById('submit-btn');
         btn.disabled = true;
-        btn.innerText = "กำลังบันทึก...";
+        btn.innerText = "บันทึก...";
 
         const cartItems = [];
         products.forEach(p => {
             if (cart[p.id] > 0) {
-                cartItems.push({
-                    id: p.id,
-                    name: p.name,
-                    price: p.price,
-                    qty: cart[p.id],
-                    subtotal: p.price * cart[p.id]
-                });
+                cartItems.push({ name: p.name, price: p.price, qty: cart[p.id], subtotal: p.price * cart[p.id] });
             }
         });
 
-        const payload = {
-            staffName: document.getElementById('staff-name').value,
-            totalCash: cash,
-            change: change,
-            cartItems: cartItems
-        };
+        const payload = { staffName: document.getElementById('staff-name').value, totalCash: cash, change: change, cartItems: cartItems };
 
         try {
-            // ส่งข้อมูลไปยัง Google Sheets
-            await fetch(SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                cache: 'no-cache',
-                body: JSON.stringify(payload)
-            });
-
-            alert("บันทึกข้อมูลสำเร็จ!");
-            location.reload(); // ล้างหน้าจอเพื่อเริ่มการขายใหม่
+            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            alert("บันทึกสำเร็จ!");
+            location.reload();
         } catch (err) {
-            alert("เกิดข้อผิดพลาดในการเชื่อมต่อ");
+            alert("ผิดพลาด!");
             btn.disabled = false;
-            btn.innerText = "✅ จบการขาย & บันทึกลงชีต";
         }
     }
 
     function closeModal() { document.getElementById('paymentModal').style.display = 'none'; }
-
     init();
 </script>
-
 </body>
 </html>
