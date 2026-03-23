@@ -116,14 +116,14 @@
         const grid = document.getElementById('product-grid');
         grid.innerHTML = products.map(p => `
             <div class="product-card">
-    <div class="product-img" style="width: 100px; height: 100px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center;">
-        ${p.image 
-            ? `<img src="${p.image}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">` 
-            : `<div style="font-size: 50px;">${p.icon}</div>`
-        }
-    </div>
-    <div class="product-name">${p.name}</div>
-    <div class="product-price">${p.price} ฿</div>
+                <div class="product-img" style="width: 100px; height: 100px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center;">
+                    ${p.image 
+                        ? `<img src="${p.image}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">` 
+                        : `<div style="font-size: 50px;">${p.icon}</div>`
+                    }
+                </div>
+                <div class="product-name">${p.name}</div>
+                <div class="product-price">${p.price} ฿</div>
                 <div class="qty-controls">
                     <button class="btn-qty btn-minus" onclick="updateQty('${p.id}', -1)">-</button>
                     <span id="qty-${p.id}" style="font-weight:bold; width:20px">0</span>
